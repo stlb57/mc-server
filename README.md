@@ -53,10 +53,3 @@ This is more than a simple script; it's a small-scale **"Server as a Service"** 
    - Connect directly from your Minecraft client.  
 
 ---
-
-## 🚀 Setup & Usage
-
-### 1. Clone the Repository
-```bash
-git clone <your-repo-url>
-cd <project-directory>
