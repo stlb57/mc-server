@@ -1,11 +1,15 @@
-FROM ubuntu:22.04
-ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /minecraft
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jre-headless wget && \
-    wget -O server.jar https://piston-data.mojang.com/v1/objects/f69c284232d7c7580bd89a5a4931c3581eae1378/server.jar && \
-    echo "eula=true" > eula.txt && \
-    apt-get clean
+FROM amazoncorretto:17-al2-jdk
+WORKDIR /server
+ARG SERVER_TYPE=vanilla
+RUN yum install -y curl && \
+    if [ "$SERVER_TYPE" = "paper" ]; then \
+        echo "Downloading PaperMC server..."; \
+        curl -o server.jar https://api.papermc.io/v2/projects/paper/versions/1.20.1/builds/112/downloads/paper-1.20.1-112.jar; \
+    else \
+        echo "Downloading Vanilla server..."; \
+        curl -o server.jar https://piston-data.mojang.com/v1/objects/84194a2f286ef7c14ed7ce0090dba59902951553/server.jar; \
+    fi
+RUN echo "eula=true" > eula.txt
 COPY server.properties .
 EXPOSE 25565
-CMD ["java", "-Xmx1024M", "-Xms1024M", "-jar", "server.jar", "nogui"]
+CMD ["java", "-Xmx2G", "-Xms1G", "-jar", "server.jar", "nogui"]
