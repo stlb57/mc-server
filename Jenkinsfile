@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     parameters {
         choice(name: 'SERVER_TYPE', choices: ['vanilla', 'paper'], description: 'The server software to use.')
         choice(name: 'GAMEMODE', choices: ['survival', 'creative', 'spectator', 'adventure'], description: 'The game mode for players.')
@@ -12,7 +13,10 @@ pipeline {
             steps {
                 script {
                     echo "Generating config: Gamemode=${params.GAMEMODE}, Level-Type=${params.LEVEL_TYPE}"
-                    sh '''
+                    
+                    // --- THIS IS THE CORRECTED SCRIPT BLOCK ---
+                    // We've added #!/bin/bash -e at the top to ensure it runs with the bash shell.
+                    sh '''#!/bin/bash -e
                         echo "motd=Autominer Server | ${params.GAMEMODE}" > ./minecraft-server-config/server.properties
                         echo "gamemode=${params.GAMEMODE}" >> ./minecraft-server-config/server.properties
                         echo "level-type=${params.LEVEL_TYPE}" >> ./minecraft-server-config/server.properties
