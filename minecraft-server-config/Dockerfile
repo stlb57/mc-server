@@ -1,16 +1,22 @@
-# Start with a base image that has Java 17 installed
-FROM openjdk:17-jre-slim
+# Start with a standard Ubuntu base image, which we know works on your server
+FROM ubuntu:22.04
+
+# Set non-interactive mode for package installations to prevent it from getting stuck
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update the image and install Java 17, curl, and other needed tools
+RUN apt-get update && apt-get install -y openjdk-17-jre-headless curl && apt-get clean
+
+# Set the working directory
 WORKDIR /server
 
-# Download the official Minecraft server file
-# You can update this URL for newer versions of Minecraft
-RUN apt-get update && apt-get install -y curl && \
-    curl -o server.jar https://piston-data.mojang.com/v1/objects/84194a2f286ef7c14ed7ce0090dba59902951553/server.jar
+# Download the official Minecraft server jar file
+RUN curl -o server.jar https://piston-data.mojang.com/v1/objects/84194a2f286ef7c14ed7ce0090dba59902951553/server.jar
 
 # Automatically accept the Minecraft EULA
 RUN echo "eula=true" > eula.txt
 
-# Copy your server configuration file from the Git repo into the image
+# Copy your server configuration file
 COPY server.properties .
 
 # Expose the default Minecraft server port
