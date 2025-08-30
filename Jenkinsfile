@@ -9,19 +9,20 @@ pipeline {
     }
 
     stages {
+        // This stage now uses the robust 'writeFile' command
         stage('Generate Config') {
             steps {
                 script {
-                    echo "Generating config: Gamemode=${params.GAMEMODE}, Level-Type=${params.LEVEL_TYPE}"
-                    
-                    // --- THIS IS THE CORRECTED SCRIPT BLOCK ---
-                    // We've added #!/bin/bash -e at the top to ensure it runs with the bash shell.
-                    sh '''#!/bin/bash -e
-                        echo "motd=Autominer Server | ${params.GAMEMODE}" > ./minecraft-server-config/server.properties
-                        echo "gamemode=${params.GAMEMODE}" >> ./minecraft-server-config/server.properties
-                        echo "level-type=${params.LEVEL_TYPE}" >> ./minecraft-server-config/server.properties
-                        echo "level-seed=${params.LEVEL_SEED}" >> ./minecraft-server-config/server.properties
-                    '''
+                    echo "Generating config file..."
+                    // Define the content of our server.properties file
+                    def serverConfig = """
+                        motd=Autominer Server | ${params.GAMEMODE}
+                        gamemode=${params.GAMEMODE}
+                        level-type=${params.LEVEL_TYPE}
+                        level-seed=${params.LEVEL_SEED}
+                    """
+                    // Use the native Jenkins step to safely write the file
+                    writeFile file: './minecraft-server-config/server.properties', text: serverConfig
                 }
             }
         }
