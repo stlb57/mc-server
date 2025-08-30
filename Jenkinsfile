@@ -6,8 +6,9 @@ pipeline {
             steps {
                 script {
                     echo 'Building the Minecraft server Docker image...'
-                    // Build the image using the Dockerfile in our Git repo
-                    sh 'docker build -t minecraft-server:latest .'
+                    // --- THIS IS THE CORRECTED LINE ---
+                    // We tell Docker to use the 'minecraft-server-config' folder as the build context.
+                    sh 'docker build -t minecraft-server:latest ./minecraft-server-config'
                 }
             }
         }
@@ -15,7 +16,6 @@ pipeline {
             steps {
                 script {
                     echo 'Stopping any old server and launching the new one...'
-                    // Stop and remove any container named "mc-server" if it exists, then launch the new one
                     sh 'docker rm -f mc-server || true'
                     sh 'docker run -d --name mc-server -p 25565:25565 minecraft-server:latest'
                 }
