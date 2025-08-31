@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Genesis Pipeline - Control Panel</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #1a1a1a; color: #f0f0f0; display: flex; justify-content: center; padding-top: 50px; }
+        .panel { background-color: #2a2a2a; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 450px; text-align: center; }
+        h1 { margin-top: 0; }
+        select, input, button { width: 100%; padding: 12px; font-size: 1em; margin-bottom: 15px; border-radius: 6px; border: none; box-sizing: border-box; background-color: #3f3f3f; color: #f0f0f0; }
+        button { background-color: #5a67d8; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.2s; }
+        button:hover { background-color: #434190; }
+        #status { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>🚀 The Genesis Pipeline</h1>
+        <p>Configure and launch your on-demand Minecraft server.</p>
+        
+        <select id="instance_type">
+            <option value="t2.small">Server Size: Small (2GB RAM)</option>
+            <option value="t2.medium">Server Size: Medium (4GB RAM)</option>
+        </select>
+        
+        <select id="server_type">
+            <option value="vanilla">Server Type: Vanilla</option>
+            <option value="paper">Server Type: Paper (Optimized)</option>
+        </select>
+        
+        <select id="gamemode">
+            <option value="survival">Gamemode: Survival</option>
+            <option value="creative">Gamemode: Creative</option>
+        </select>
+
+        <select id="level_type">
+            <option value="default">World Type: Default</option>
+            <option value="flat">World Type: Flat</option>
+            <option value="amplified">World Type: Amplified</option>
+        </select>
+
+        <select id="difficulty">
+            <option value="peaceful">Difficulty: Peaceful</option>
+            <option value="easy">Difficulty: Easy</option>
+            <option value="normal">Difficulty: Normal</option>
+            <option value="hard">Difficulty: Hard</option>
+        </select>
+
+        <select id="pvp">
+            <option value="true">PVP: Enabled</option>
+            <option value="false">PVP: Disabled</option>
+        </select>
+
+        <input type="text" id="level_seed" placeholder="World Seed (optional)">
+
+        <button onclick="launchServer()">Launch Server</button>
+        <p id="status"></p>
+    </div>
+
+    <script>
+        async function launchServer() {
+            const payload = {
+                INSTANCE_TYPE: document.getElementById('instance_type').value,
+                SERVER_TYPE: document.getElementById('server_type').value,
+                GAMEMODE: document.getElementById('gamemode').value,
+                LEVEL_TYPE: document.getElementById('level_type').value,
+                DIFFICULTY: document.getElementById('difficulty').value,
+                PVP: document.getElementById('pvp').value,
+                LEVEL_SEED: document.getElementById('level_seed').value
+            };
+            
+            const statusP = document.getElementById('status');
+            statusP.textContent = 'Sending launch command...';
+            const apiUrl = '/launch'; 
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                statusP.textContent = `✅ Success: ${result.message}`;
+            } catch (error) {
+                statusP.textContent = `❌ Error: Could not trigger the build.`;
+            }
+        }
+    </script>
+</body>
+</html>
