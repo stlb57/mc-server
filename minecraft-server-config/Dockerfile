@@ -12,5 +12,6 @@ RUN yum install -y curl && \
 RUN echo "eula=true" > eula.txt
 COPY server.properties .
 EXPOSE 25565
-CMD java $JVM_OPTS -jar server.jar nogui
+CMD ["java", "-Xmx2G", "-Xms1G", "-jar", "server.jar", "nogui"]
+
 
