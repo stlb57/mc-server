@@ -3,25 +3,27 @@ pipeline {
 
     parameters {
         choice(name: 'SERVER_TYPE', choices: ['vanilla', 'paper'], description: 'The server software to use.')
+        choice(name: 'RAM_ALLOCATION', choices: ['1G', '1.5G'], description: 'RAM to allocate to the Minecraft server (max for t2.small is ~1.7G).')
         choice(name: 'GAMEMODE', choices: ['survival', 'creative', 'spectator', 'adventure'], description: 'The game mode for players.')
+        choice(name: 'DIFFICULTY', choices: ['peaceful', 'easy', 'normal', 'hard'], description: 'The server difficulty.')
+        choice(name: 'PVP', choices: ['true', 'false'], description: 'Enable or disable Player vs. Player.')
         choice(name: 'LEVEL_TYPE', choices: ['default', 'flat', 'largeBiomes', 'amplified'], description: 'The type of world to generate.')
         string(name: 'LEVEL_SEED', defaultValue: '', description: '(Optional) Enter a world seed.')
     }
 
     stages {
-        // This stage now uses the robust 'writeFile' command
         stage('Generate Config') {
             steps {
                 script {
                     echo "Generating config file..."
-                    // Define the content of our server.properties file
                     def serverConfig = """
                         motd=Autominer Server | ${params.GAMEMODE}
                         gamemode=${params.GAMEMODE}
+                        difficulty=${params.DIFFICULTY}
+                        pvp=${params.PVP}
                         level-type=${params.LEVEL_TYPE}
                         level-seed=${params.LEVEL_SEED}
                     """
-                    // Use the native Jenkins step to safely write the file
                     writeFile file: './minecraft-server-config/server.properties', text: serverConfig
                 }
             }
@@ -47,3 +49,4 @@ pipeline {
         }
     }
 }
+
